@@ -1,9 +1,9 @@
 # O Checklist online report
-Získej online html report se změnami ze startu orientačního závodu pomocí mobilní aplikace O Checklist od Anderse Löfgrena <al@stigning.se> a FTP nahrávání na server.
+Získej online html report se změnami ze startu orientačního závodu pomocí mobilní aplikace [O Checklist](https://play.google.com/store/apps/details?id=se.tg3.startlist) od [Anderse Löfgrena](<al@stigning.se>) a nahrávání na server přes FTP.
 
 ## Požadavky
 - Přístup na server přes FTP
-- Nainstalovaný Python
+- Nainstalovaný [Python](https://www.python.org/)
 - Nainstalovaný [Node.js](https://nodejs.org/en) (pro `live-server`)
 - Nainstalované potřebné Python balíčky
 
@@ -22,11 +22,11 @@ Získej online html report se změnami ze startu orientačního závodu pomocí 
 Dej mi vědět jak to šlo.
 
 # EN:
- Get online html report with changes from the start of orienteering event for manual updates in the db using mobile app O Checklist by Anders Löfgren <al@stigning.se> and FTP. 
+ Get online html report with changes from the start of orienteering event for manual updates in the db using mobile app [O Checklist](https://play.google.com/store/apps/details?id=se.tg3.startlist) by [Anders Löfgren](<al@stigning.se>) and server upload via FTP. 
 
 ## Requirements
 - Credential to the connection to the server
-- Installed Python
+- Installed [Python](https://www.python.org/)
 - Installed [Node.js](https://nodejs.org/en) (for `live-server`)
 
 ## Steps:

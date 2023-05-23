@@ -3,20 +3,18 @@ import ftplib
 import yaml
 from typing import Tuple
 from io import StringIO
-import psycopg2
-import logging
-from config import ftp_server_credentials, quickevent_db_config
-import datetime
+from config import ftp_server_credentials
+from datetime import datetime
 
 """
-Process report from the mobile app O-checklist and update data in quickevent database
-Usage: 
+Process report from the mobile app O-checklist and create html report with changes that can be ticked as done
+Usage: All orienteering events with startlist in iof-xml v3.0
 """
 
 def main() -> None:
     downloaded_file = download_file_from_ftp(**ftp_server_credentials)
     changes = process_downloaded_yaml(downloaded_file)
-    generateHtmlReport(changes)
+    generate_html_report(changes)
 
 def download_file_from_ftp(server, login, password, subfolder='/'):
     """
@@ -25,7 +23,7 @@ def download_file_from_ftp(server, login, password, subfolder='/'):
     :param login: Username
     :param password: password
     :param subfolder: downloaded file location
-    :return: list of downloaded file content
+    :return: list of list wirh filename and downloaded file content
     """
 
     downloaded_files = []
@@ -49,7 +47,7 @@ def download_file_from_ftp(server, login, password, subfolder='/'):
         ftp.retrbinary('RETR ' + filename, write_file_data)
 
         # Retrieve the contents of the StringIO object as a string
-        downloaded_files.append(downloaded_file.getvalue())
+        downloaded_files.append([filename, downloaded_file.getvalue()])
 
     # Close the FTP connection
     ftp.quit()
@@ -59,7 +57,7 @@ def download_file_from_ftp(server, login, password, subfolder='/'):
 def process_downloaded_yaml(downloaded_files):
     """
     Iterates over all downloaded file and separates changes - dns, late starts, changes cards and new comments
-    :param downloaded_files: list of contents of downloaded yaml files
+    :param downloaded_files: list of lists iwth filename and contents of downloaded yaml files
     :return: dictionary of lists with changes by type
     """
 
@@ -69,15 +67,13 @@ def process_downloaded_yaml(downloaded_files):
     changes_dns = []
     changes_late_start = []
     changes_comments = []
-
-    changes_timestamps = []
-    changes_creators = []
+    changes_statistics = []
 
     changes = {}
 
     for file in downloaded_files:
         # Load the contents of the downloaded YAML file
-        downloaded_data = yaml.safe_load(file)
+        downloaded_data = yaml.safe_load(file[1])
 
         # Access report data
         report_data = downloaded_data['Data']
@@ -99,36 +95,22 @@ def process_downloaded_yaml(downloaded_files):
             # Store started runners
             else:
                 started_ok.append(runner['Runner']['Name'] + ', ' + runner['Runner']['Org'])
+        # Store statistics
+        stats = {'ok': len(started_ok),
+                 'dns': len(changes_dns),
+                 'card-changes': len(changes_cards),
+                 'late-starts': len(changes_late_start),
+                 'comments': len(changes_comments)}
+        changes_statistics.append([file[0], downloaded_data['Created'], downloaded_data['Creator'], downloaded_data['Version'], stats]);
 
-        changes['changed_cards'] = changes_cards
-        changes['dns'] = changes_dns
-        changes['late_starts'] = changes_late_start
-        changes['comments'] = changes_comments
+    # Store into the main dictionary
+    changes['dns'] = changes_dns
+    changes['changed_cards'] = changes_cards
+    changes['late_starts'] = changes_late_start
+    changes['comments'] = changes_comments
+    changes['statistics'] = changes_statistics
 
-        changes_timestamps.append(downloaded_data['Created'])
-        changes_creators.append(downloaded_data['Creator'])
-
-    def get_report_timestamp(timestamps):
-        joined_timestamps = []
-        for timestamp in timestamps:
-            joined_timestamps.append(timestamp.strftime('%d.%m.%Y %H:%M:%S'))
-        return ', '.join(joined_timestamps)
-
-    def get_used_app_versions(changes_creators):
-        app_name = ''
-        versions = []
-        for creator in changes_creators:
-            if " ".join(creator.split()[:-1]) != app_name:
-                app_name = " ".join(creator.split()[:-1])
-            if creator.split()[-1] not in versions:
-                versions.append(creator.split()[-1])
-
-        return app_name + ' ' + ', '.join(versions)
-
-    changes['timestamp'] = get_report_timestamp(changes_timestamps)
-    changes['creator'] = get_used_app_versions(changes_creators)
-
-    # Get statistics
+    # Print statistics
     print(f"Event statistics:\n"
           f"- started runners: {len(started_ok)}\n"
           f"- dns: {len(changes_dns)}\n"
@@ -138,36 +120,7 @@ def process_downloaded_yaml(downloaded_files):
 
     return changes
 
-def format_timestamp(dt):
-    """
-    Handle
-    :param dt: datetime from report, can be both datetime.datetime and string (if missing seconds)
-    :return: Formated timestamp
-    """
-    # Handle if string
-    if isinstance(dt, str):
-        # Handle case without seconds
-        if len(dt.split(':')) > 3:
-            timestamp = datetime.datetime.strptime(dt, "%Y-%m-%dT%H:%M%z")
-        # Handle case with seconds
-        else:
-            timestamp = datetime.datetime.strptime(dt, "%Y-%m-%dT%H:%M%S%z")
-        # Handle case without seconds
-        if timestamp.second == 0:
-            formatted_time = timestamp.strftime("%d.%m.%d %H:%M")
-        # Handle case with seconds
-        else:
-            formatted_time = timestamp.strftime("%d.%m.%d %H:%M:%S")
-    # Handle case without seconds
-    elif dt.second == 0:
-        formatted_time = dt.strftime("%d.%m.%d %H:%M")
-
-    # Handle case with seconds
-    else:
-        formatted_time = dt.strftime("%d.%m.%d %H:%M:%S")
-    return formatted_time
-
-def generateHtmlReport(changes):
+def generate_html_report(changes, report_name = 'online-report'):
     """
     Create html report with changes from the start in hrml format which is more readable.
     :param changes:
@@ -178,12 +131,17 @@ def generateHtmlReport(changes):
         <!DOCTYPE html>
         <html>
             <head>
+                <meta name="description" content="Report with changes from the start of orienteering event">
+                <meta name="keywords" content="ochecklist, orienteering, start, report">
+                <meta name="author" content="Lukas Kettner">
                 <meta http-equiv='Content-Type' content='text/html; charset=utf-8' />
-                <meta name="viewport" content="width=device-width, initial-scale=1.0" />                
+                <meta name="viewport" content="width=device-width, initial-scale=1.0" /> 
+                <!-- TODO: Can be used instead of live-server -->
+                <!--<meta http-equiv="refresh" content="30"> -->           
                 {style}                
                 <title>{heading}</title>
             </head>
-            <body onload="sortTable(0, 'dataDNS'),sortTable(0, 'dataCards'),sortTable(0, 'dataLateStart'),sortTable(0, 'dataComments')">
+            <body onload="sortTable(0, 'dataDNS'),sortTable(0, 'dataCards'),sortTable(0, 'dataLateStart'),sortTable(0, 'dataComments'),sortTable(0, 'dataStatistics')">
                 <header>
                     <h1>{heading}</h1>
                     <h2>{time_stamp}</h2>
@@ -199,9 +157,12 @@ def generateHtmlReport(changes):
 
                 <!-- Komentáře -->
                 <section>{content_comments}</section>
+                
+                <!-- Statistiky -->
+                <section>{content_statistics}</section>
 
                 <footer>
-                    <p>Created with script by Cáš based on report from app {creator}</p>
+                    <p>Created with script by Cáš based on report from O Checklist mobile app.</p>
                 </footer>
                 {javascript}
             </body>
@@ -446,7 +407,6 @@ def generateHtmlReport(changes):
                 <td class='card'>'''+str(dns[4])+'''</td>
             </tr>
             '''
-
     dns_changes_html = dns_changes_template.format(table_data=dns_changes_data)
 
     # Cards
@@ -489,7 +449,6 @@ def generateHtmlReport(changes):
                 <td class='card'>'''+str(card[5])+'''</td>
             </tr>
             '''
-
     cards_changes_html = cards_changes_template.format(table_data=cards_changes_data)
 
     # Late starts
@@ -520,19 +479,16 @@ def generateHtmlReport(changes):
                 </tr>
                 '''
         for late_start in changes['late_starts']:
-            print('Row:', late_start, ', timestamp:', late_start[1])
-            # <td class='timestamp'>'''+late_start[1].strftime('%H:%M:%S')+'''</td>
             late_starts_changes_data += '''            
             <tr id='''+late_start[0]+'''>
                 <!-- <td class='id'>'''+late_start[0]+'''</td> -->
                 <td><input type="checkbox" class="solved"></td>
-                <td class='timestamp'>'''+format_timestamp(late_start[1])+'''</td>
+                <td class='timestamp'>'''+late_start[1].strftime('%H:%M:%S')+'''</td>
                 <td class='name'>'''+late_start[2]+'''</td>
                 <td class='club'>'''+late_start[3]+'''</td>
                 <td class='card'>'''+str(late_start[4])+'''</td>
             </tr>
             '''
-
     late_starts_changes_html = late_starts_changes_template.format(table_data=late_starts_changes_data)
 
     # Comments
@@ -575,56 +531,84 @@ def generateHtmlReport(changes):
                 <td class='comment'>'''+comment[5]+'''</td>
             </tr>
             '''
-
     comments_changes_html = comments_changes_template.format(table_data=comments_changes_data)
 
+    # Statistics
+    statistics_changes_template = '''
+                        <p class="cat-title">
+                            <span class="category">Statistiky reportů</span>
+                        </p>
+                        <table id='dataStatistics'>              
+                            {table_data}  
+                        </table>
+                    '''
+    statistics_changes_data = ''
+    if len(changes['statistics']) == 0:
+        comments_changes_data += '''
+        <tr>
+            <td class='nodata' colspan='5'>Žádné statistiky.</td>
+        </tr>
+        '''
+    else:
+        statistics_changes_data += '''
+                <tr>
+                    <th onclick="sortTable(0, 'dataStatistics')" class='filename'>Název souboru</th>
+                    <th onclick="sortTable(1, 'dataStatistics')" class='created'>Datum vytvoření</th>
+                    <th onclick="sortTable(2, 'dataStatistics')" class='creator'>Verze aplikace</th>
+                    <th onclick="sortTable(3, 'dataStatistics')" class='version'>Verze reportu</th>
+                    <th onclick="sortTable(4, 'dataStatistics')" class='ok'>OK</th>
+                    <th onclick="sortTable(5, 'dataStatistics')" class='dns'>DNS</th>
+                    <th onclick="sortTable(6, 'dataStatistics')" class='new-cards'>New cards</th>
+                    <th onclick="sortTable(7, 'dataStatistics')" class='late-starts'>Late starts</th>
+                    <th onclick="sortTable(8, 'dataStatistics')" class='new-comments'>New comments</th>
+                </tr> 
+                '''
+        for i in range(0,len(changes['statistics'])):
+            if i == 0:
+                statistics_changes_data += '''            
+                <tr>
+                    <td class='file'>''' + changes['statistics'][i][0] + '''</td>
+                    <td class='created'>'''+changes['statistics'][i][1].strftime('%H:%M:%S')+'''</td>
+                    <td class='creator'>'''+changes['statistics'][i][2]+'''</td>
+                    <td class='version'>'''+str(changes['statistics'][i][3])+'''</td>
+                    <td class='ok'>'''+str(changes['statistics'][i][4]['ok'])+'''</td>
+                    <td class='dns'>'''+str(changes['statistics'][i][4]['dns'])+'''</td>
+                    <td class='new-cards'>'''+str(changes['statistics'][i][4]['card-changes'])+'''</td>
+                    <td class='late-starts'>'''+str(changes['statistics'][i][4]['late-starts'])+'''</td>
+                    <td class='new-comments'>'''+str(changes['statistics'][i][4]['comments'])+'''</td>
+                </tr>
+                '''
+            else:
+                statistics_changes_data += '''            
+                <tr>
+                    <td class='file'>''' + changes['statistics'][i][0] + '''</td>
+                    <td class='created'>''' + changes['statistics'][i][1].strftime('%H:%M:%S') + '''</td>
+                    <td class='creator'>''' + changes['statistics'][i][2] + '''</td>
+                    <td class='version'>''' + str(changes['statistics'][i][3]) + '''</td>
+                    <td class='ok'>''' + str(changes['statistics'][i][4]['ok']-changes['statistics'][i-1][4]['ok']) + '''</td>
+                    <td class='dns'>''' + str(changes['statistics'][i][4]['dns']-changes['statistics'][i-1][4]['dns']) + '''</td>
+                    <td class='new-cards'>''' + str(changes['statistics'][i][4]['card-changes']-changes['statistics'][i-1][4]['card-changes']) + '''</td>
+                    <td class='late-starts'>''' + str(changes['statistics'][i][4]['late-starts']-changes['statistics'][i-1][4]['late-starts']) + '''</td>
+                    <td class='new-comments'>''' + str(changes['statistics'][i][4]['comments']-changes['statistics'][i-1][4]['comments']) + '''</td>
+                </tr>
+                '''
+    statistics_changes_html = statistics_changes_template.format(table_data=statistics_changes_data)
+
+    # Generate html report
     html_file = html_file_template.format(style=html_style,
                                           javascript=html_javascript,
                                           heading='O Checklist report',
-                                          creator=changes['creator'],
-                                          time_stamp=changes['timestamp'],
+                                          time_stamp=datetime.now().strftime('%d.%m.%Y %H:%M:%S'),
                                           content_dns=dns_changes_html,
                                           content_cards=cards_changes_html,
                                           content_late_start=late_starts_changes_html,
-                                          content_comments=comments_changes_html)
+                                          content_comments=comments_changes_html,
+                                          content_statistics=statistics_changes_html)
     # Write the HTML to a file
-    with open("report.html", "w", encoding='utf-8') as f:
+    with open(report_name+".html", "w", encoding='utf-8') as f:
         f.write(html_file)
 
     return html_file
-
-def create_db_changes(changes):
-    """
-    Create changes that come from the start in quickevent database
-    :param changes: list of changes to proceed
-    """
-    # Configure the logging module
-    logging.basicConfig(filename='mylog.log', level=logging.INFO)
-
-    # Establish a connection to the PostgreSQL database using the db_config dictionary
-    conn = psycopg2.connect(**quickevent_db_config)
-
-    # Create a cursor object to execute SQL commands
-    cur = conn.cursor()
-
-    # Define the INSERT command with placeholders for the values to be inserted
-    insert_command = "INSERT INTO your_table_name (column1, column2, column3) VALUES (%s, %s, %s)"
-
-    # Define the values to be inserted into the table
-    values = ('value1', 'value2', 'value3')
-
-    # Execute the INSERT command with the values
-    cur.execute(insert_command, values)
-
-    # Log the executed command to the log file
-    logging.info(f"Executed command: {cur.query.decode('utf-8')}")
-
-    # Commit the transaction to the database
-    conn.commit()
-
-    # Close the cursor and connection
-    cur.close()
-    conn.close()
 
 def parse_args() -> Tuple[int, str]:
     """
