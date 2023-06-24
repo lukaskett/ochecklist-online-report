@@ -1,0 +1,704 @@
+
+        <!DOCTYPE html>
+        <html>
+            <head>
+                <meta name="description" content="Report with changes from the start of orienteering event">
+                <meta name="keywords" content="ochecklist, orienteering, start, report">
+                <meta name="author" content="Lukas Kettner">
+                <meta http-equiv='Content-Type' content='text/html; charset=utf-8' />
+                <meta name="viewport" content="width=device-width, initial-scale=1.0" /> 
+                <!-- TODO: Can be used instead of live-server -->
+                <!--<meta http-equiv="refresh" content="30"> -->           
+                
+    <style type='text/css'>
+    * {
+                        box-sizing: border-box;
+                    }
+            
+                    html {
+                        font-family: "Roboto", sans-serif;
+                    }
+            
+                    body {
+                        margin: 0px;
+                        max-width: 1000px;
+                    }
+            
+                    @media screen and (min-width: 801px) {
+                        h1 {
+                            font-size: 30px;
+                        }
+            
+                        h2 {
+                            font-size: 20px;
+                        }
+                    }
+            
+                    @media screen and (max-width: 800px) {
+                        h1 {
+                            font-size: 4vw;
+                        }
+            
+                        h2 {
+                            font-size: 3vw;
+                        }
+                    }
+            
+                    @media only screen and (max-width: 600px) {
+                        th.card,
+                        th.club,            
+                        td.card,
+                        td.club {
+                            display: none;
+                        }
+                    }
+            
+                    h1 {
+                        margin: 5px 0px;
+                    }
+            
+                    h2 {
+                        margin: 5px 0px;
+                    }
+            
+                    header {
+                        padding: 1px 15px;
+                        margin-top: 5px;
+                    }
+        
+                    footer {
+                        padding: 1px 15px;
+                        margin: 5px 15px;
+                        border-radius: 5px;
+                        background-color: #d3d3d3;
+                        font-size: 12px;
+                    }
+            
+                    section {
+                        padding: 10px 15px;
+                        margin: 0px 0px;
+                        page-break-inside: avoid;
+                    }
+            
+                    table,
+                    tr,
+                    td {
+                        border-collapse: collapse;
+                        padding: 2px;
+                    }
+            
+                    table {
+                        width: 100%;
+                    }
+            
+                    td.name,
+                    td.club {
+                        width: 30%;
+                    }
+            
+                    td.card {
+                        width: 15%;
+                    }
+                    
+                    th,
+                    td {
+                        text-align: left;
+                    }
+                    
+                    td.nodata {
+                        background-color: #d3d3d3;
+                        border-radius: 5px;
+                    }
+                    
+                    td.oldcard {
+                        text-decoration: line-through;
+                    }
+            
+                    tr:nth-child(even) {
+                        background-color: #f2f2f2;
+                    }
+            
+                    p.cat-title {
+                        background-color: #139c17;
+                        ;
+                        margin: 10px 0px 5px 0px;
+                        padding: 5px;
+                        border-radius: 5px;
+                        position: relative;
+                    }
+            
+                    p.cat-title span.category {
+                        font-weight: bold;
+                        font-size: 1.5em;
+                    }
+            
+                    p.cat-title span.controls {
+                        font-size: 1.0em;
+                        position: absolute;
+                        right: 5px;
+                        bottom: 5px;
+                    }
+            </style>
+                    
+                <title>O Checklist report</title>
+            </head>
+            <body onload="sortTable(0, 'dataDNS'),sortTable(0, 'dataCards'),sortTable(0, 'dataLateStart'),sortTable(0, 'dataComments'),sortTable(0, 'dataStatistics')">
+                <header>
+                    <h1>O Checklist report</h1>
+                    <h2>23.05.2023 22:59:15</h2>
+                </header>                
+                <!-- Nestartující -->
+                <section>
+                    <p class="cat-title">
+                        <span class="category">Přehled neběžících závodníků a závodnic</span>
+                    </p>
+                    <table id='dataDNS'>                        
+                        
+                <tr>
+                    <!-- <th class='id'>Id</th> -->
+                    <th onclick="sortTable(0, 'dataDNS')" class='solved'>Vyřešeno</th>
+                    <th onclick="sortTable(1, 'dataDNS')" class='timestamp'>Čas změny</th>
+                    <th onclick="sortTable(2, 'dataDNS')" class='name'>Jméno</th>
+                    <th onclick="sortTable(3, 'dataDNS')" class='club'>Klub</th>
+                    <th onclick="sortTable(4, 'dataDNS')" class='card'>Čip</th>
+                </tr>
+                            
+            <tr id=TAP0953>
+                <!-- <td class='id'>TAP0953</td> -->
+                <!-- <td class='timestamp'>23.05.2023 21:09:47</td> -->
+                <td><input type="checkbox" class="solved"></td>
+                <td class='timestamp'>21:09:47</td>
+                <td class='name'>Emma Štěpánková</td>
+                <td class='club'>TAP</td>
+                <td class='card'>2053563</td>
+            </tr>
+                        
+            <tr id=SLA9702>
+                <!-- <td class='id'>SLA9702</td> -->
+                <!-- <td class='timestamp'>23.05.2023 21:09:12</td> -->
+                <td><input type="checkbox" class="solved"></td>
+                <td class='timestamp'>21:09:12</td>
+                <td class='name'>Tomáš Straka</td>
+                <td class='club'>SLA</td>
+                <td class='card'>51715</td>
+            </tr>
+                        
+            <tr id=KAM1300>
+                <!-- <td class='id'>KAM1300</td> -->
+                <!-- <td class='timestamp'>23.05.2023 21:09:19</td> -->
+                <td><input type="checkbox" class="solved"></td>
+                <td class='timestamp'>21:09:19</td>
+                <td class='name'>Michal Mišek</td>
+                <td class='club'>KAM</td>
+                <td class='card'>2088709</td>
+            </tr>
+                        
+            <tr id=ZVO0954>
+                <!-- <td class='id'>ZVO0954</td> -->
+                <!-- <td class='timestamp'>23.05.2023 21:10:55</td> -->
+                <td><input type="checkbox" class="solved"></td>
+                <td class='timestamp'>21:10:55</td>
+                <td class='name'>Klára Michalíková</td>
+                <td class='club'>ZVO</td>
+                <td class='card'>8033280</td>
+            </tr>
+                        
+            <tr id=KPY0903>
+                <!-- <td class='id'>KPY0903</td> -->
+                <!-- <td class='timestamp'>23.05.2023 21:11:17</td> -->
+                <td><input type="checkbox" class="solved"></td>
+                <td class='timestamp'>21:11:17</td>
+                <td class='name'>Radovan Galuška</td>
+                <td class='club'>KPY</td>
+                <td class='card'>52678</td>
+            </tr>
+                        
+            <tr id=LOU1351>
+                <!-- <td class='id'>LOU1351</td> -->
+                <!-- <td class='timestamp'>23.05.2023 21:11:21</td> -->
+                <td><input type="checkbox" class="solved"></td>
+                <td class='timestamp'>21:11:21</td>
+                <td class='name'>Karolína Ida Kabáth</td>
+                <td class='club'>LOU</td>
+                <td class='card'>232005</td>
+            </tr>
+                        
+            <tr id=RIC0853>
+                <!-- <td class='id'>RIC0853</td> -->
+                <!-- <td class='timestamp'>23.05.2023 22:56:16</td> -->
+                <td><input type="checkbox" class="solved"></td>
+                <td class='timestamp'>22:56:16</td>
+                <td class='name'>Veronika Havlíčková</td>
+                <td class='club'>RIC</td>
+                <td class='card'>8109375</td>
+            </tr>
+                        
+            <tr id=SJC8007>
+                <!-- <td class='id'>SJC8007</td> -->
+                <!-- <td class='timestamp'>23.05.2023 22:56:33</td> -->
+                <td><input type="checkbox" class="solved"></td>
+                <td class='timestamp'>22:56:33</td>
+                <td class='name'>Michal Uhlík</td>
+                <td class='club'>SJC</td>
+                <td class='card'>8003099</td>
+            </tr>
+                        
+            <tr id=FSP1100>
+                <!-- <td class='id'>FSP1100</td> -->
+                <!-- <td class='timestamp'>23.05.2023 22:57:35</td> -->
+                <td><input type="checkbox" class="solved"></td>
+                <td class='timestamp'>22:57:35</td>
+                <td class='name'>Theodor Bartoň</td>
+                <td class='club'>FSP</td>
+                <td class='card'>8026639</td>
+            </tr>
+                        
+            <tr id=RIC7650>
+                <!-- <td class='id'>RIC7650</td> -->
+                <!-- <td class='timestamp'>23.05.2023 22:57:50</td> -->
+                <td><input type="checkbox" class="solved"></td>
+                <td class='timestamp'>22:57:50</td>
+                <td class='name'>Ivana Tolarová</td>
+                <td class='club'>RIC</td>
+                <td class='card'>2073688</td>
+            </tr>
+                        
+            <tr id=OKP6200>
+                <!-- <td class='id'>OKP6200</td> -->
+                <!-- <td class='timestamp'>23.05.2023 22:57:53</td> -->
+                <td><input type="checkbox" class="solved"></td>
+                <td class='timestamp'>22:57:53</td>
+                <td class='name'>Ivo Novák</td>
+                <td class='club'>OKP</td>
+                <td class='card'>8014533</td>
+            </tr>
+                        
+            <tr id=TAP0705>
+                <!-- <td class='id'>TAP0705</td> -->
+                <!-- <td class='timestamp'>23.05.2023 22:58:00</td> -->
+                <td><input type="checkbox" class="solved"></td>
+                <td class='timestamp'>22:58:00</td>
+                <td class='name'>Erik Jirous</td>
+                <td class='club'>TAP</td>
+                <td class='card'>8007181</td>
+            </tr>
+                        
+            <tr id=MKP5000>
+                <!-- <td class='id'>MKP5000</td> -->
+                <!-- <td class='timestamp'>23.05.2023 22:58:40</td> -->
+                <td><input type="checkbox" class="solved"></td>
+                <td class='timestamp'>22:58:40</td>
+                <td class='name'>Miloslav Toušek</td>
+                <td class='club'>MKP</td>
+                <td class='card'>51655</td>
+            </tr>
+                        
+            <tr id=PGP1052>
+                <!-- <td class='id'>PGP1052</td> -->
+                <!-- <td class='timestamp'>23.05.2023 22:55:57</td> -->
+                <td><input type="checkbox" class="solved"></td>
+                <td class='timestamp'>22:55:57</td>
+                <td class='name'>Anna Řepková</td>
+                <td class='club'>PGP</td>
+                <td class='card'>2134299</td>
+            </tr>
+                        
+            <tr id=VSP7559>
+                <!-- <td class='id'>VSP7559</td> -->
+                <!-- <td class='timestamp'>23.05.2023 22:55:44</td> -->
+                <td><input type="checkbox" class="solved"></td>
+                <td class='timestamp'>22:55:44</td>
+                <td class='name'>Iva Malečková</td>
+                <td class='club'>VSP</td>
+                <td class='card'>2067949</td>
+            </tr>
+                        
+            <tr id=KAM0952>
+                <!-- <td class='id'>KAM0952</td> -->
+                <!-- <td class='timestamp'>23.05.2023 22:55:39</td> -->
+                <td><input type="checkbox" class="solved"></td>
+                <td class='timestamp'>22:55:39</td>
+                <td class='name'>Sára Pokorná</td>
+                <td class='club'>KAM</td>
+                <td class='card'>2118500</td>
+            </tr>
+                        
+            <tr id=PGP1104>
+                <!-- <td class='id'>PGP1104</td> -->
+                <!-- <td class='timestamp'>23.05.2023 22:55:23</td> -->
+                <td><input type="checkbox" class="solved"></td>
+                <td class='timestamp'>22:55:23</td>
+                <td class='name'>Dominik Černý</td>
+                <td class='club'>PGP</td>
+                <td class='card'>2151452</td>
+            </tr>
+                        
+            <tr id=PGP0853>
+                <!-- <td class='id'>PGP0853</td> -->
+                <!-- <td class='timestamp'>23.05.2023 22:54:59</td> -->
+                <td><input type="checkbox" class="solved"></td>
+                <td class='timestamp'>22:54:59</td>
+                <td class='name'>Anežka Bartalošová</td>
+                <td class='club'>PGP</td>
+                <td class='card'>2084992</td>
+            </tr>
+                        
+            <tr id=RIC1400>
+                <!-- <td class='id'>RIC1400</td> -->
+                <!-- <td class='timestamp'>23.05.2023 22:54:51</td> -->
+                <td><input type="checkbox" class="solved"></td>
+                <td class='timestamp'>22:54:51</td>
+                <td class='name'>Michal Pračka</td>
+                <td class='club'>RIC</td>
+                <td class='card'>426373</td>
+            </tr>
+                        
+            <tr id=DKP1173>
+                <!-- <td class='id'>DKP1173</td> -->
+                <!-- <td class='timestamp'>23.05.2023 22:53:00</td> -->
+                <td><input type="checkbox" class="solved"></td>
+                <td class='timestamp'>22:53:00</td>
+                <td class='name'>Jolana Čechová</td>
+                <td class='club'>DKP</td>
+                <td class='card'>2219077</td>
+            </tr>
+                        
+            <tr id=KNC7851>
+                <!-- <td class='id'>KNC7851</td> -->
+                <!-- <td class='timestamp'>23.05.2023 22:52:49</td> -->
+                <td><input type="checkbox" class="solved"></td>
+                <td class='timestamp'>22:52:49</td>
+                <td class='name'>Eva Havlová</td>
+                <td class='club'>KNC</td>
+                <td class='card'>224869</td>
+            </tr>
+                        
+            <tr id=0100001>
+                <!-- <td class='id'>0100001</td> -->
+                <!-- <td class='timestamp'>23.05.2023 22:52:40</td> -->
+                <td><input type="checkbox" class="solved"></td>
+                <td class='timestamp'>22:52:40</td>
+                <td class='name'>Vojtěch Větvička</td>
+                <td class='club'>010</td>
+                <td class='card'>None</td>
+            </tr>
+                        
+            <tr id=VSP6710>
+                <!-- <td class='id'>VSP6710</td> -->
+                <!-- <td class='timestamp'>23.05.2023 22:52:35</td> -->
+                <td><input type="checkbox" class="solved"></td>
+                <td class='timestamp'>22:52:35</td>
+                <td class='name'>Vladimír Zavadil</td>
+                <td class='club'>VSP</td>
+                <td class='card'>8183149</td>
+            </tr>
+                        
+            <tr id=FSP0600>
+                <!-- <td class='id'>FSP0600</td> -->
+                <!-- <td class='timestamp'>23.05.2023 22:59:00</td> -->
+                <td><input type="checkbox" class="solved"></td>
+                <td class='timestamp'>22:59:00</td>
+                <td class='name'>Nikola Skripnik</td>
+                <td class='club'>FSP</td>
+                <td class='card'>8028832</td>
+            </tr>
+                        
+            <tr id=TAP0953>
+                <!-- <td class='id'>TAP0953</td> -->
+                <!-- <td class='timestamp'>23.05.2023 21:09:47</td> -->
+                <td><input type="checkbox" class="solved"></td>
+                <td class='timestamp'>21:09:47</td>
+                <td class='name'>Emma Štěpánková</td>
+                <td class='club'>TAP</td>
+                <td class='card'>2053563</td>
+            </tr>
+                        
+            <tr id=TAP1401>
+                <!-- <td class='id'>TAP1401</td> -->
+                <!-- <td class='timestamp'>23.05.2023 21:09:08</td> -->
+                <td><input type="checkbox" class="solved"></td>
+                <td class='timestamp'>21:09:08</td>
+                <td class='name'>Šimon Hýbl</td>
+                <td class='club'>TAP</td>
+                <td class='card'>51628</td>
+            </tr>
+                        
+            <tr id=SLA9702>
+                <!-- <td class='id'>SLA9702</td> -->
+                <!-- <td class='timestamp'>23.05.2023 21:09:12</td> -->
+                <td><input type="checkbox" class="solved"></td>
+                <td class='timestamp'>21:09:12</td>
+                <td class='name'>Tomáš Straka</td>
+                <td class='club'>SLA</td>
+                <td class='card'>51715</td>
+            </tr>
+                        
+            <tr id=KAM1300>
+                <!-- <td class='id'>KAM1300</td> -->
+                <!-- <td class='timestamp'>23.05.2023 21:09:19</td> -->
+                <td><input type="checkbox" class="solved"></td>
+                <td class='timestamp'>21:09:19</td>
+                <td class='name'>Michal Mišek</td>
+                <td class='club'>KAM</td>
+                <td class='card'>2088709</td>
+            </tr>
+            
+                    </table>
+                </section>                
+
+                <!-- Změny čipů -->
+                <section>
+                    <p class="cat-title">
+                        <span class="category">Přehled změn čipů</span>
+                    </p>
+                    <table id='dataCards'>                        
+                        
+                <tr>
+                    <!-- <th class='id'>Id</th> -->
+                    <th onclick="sortTable(0, 'dataCards')" class='solved'>Vyřešeno</th>
+                    <th onclick="sortTable(1, 'dataCards')" class='timestamp'>Čas změny</th>
+                    <th onclick="sortTable(2, 'dataCards')" class='name'>Jméno</th>
+                    <th onclick="sortTable(3, 'dataCards')" class='club'>Klub</th>
+                    <th onclick="sortTable(4, 'dataCards')" class='oldcard'>Starý čip</th>
+                    <th onclick="sortTable(5, 'dataCards')" class='card'>Nový čip</th>
+                </tr>
+                            
+            <tr id=EKP7002>
+                <!-- <td class='id'>EKP7002</td> -->
+                <td><input type="checkbox" class="solved"></td>
+                <td class='timestamp'>21:11:34 </td>
+                <td class='name'>Ondřej Blaha</td>
+                <td class='club'>EKP</td>
+                <td class='oldcard'>9700729</td>
+                <td class='card'>8652336</td>
+            </tr>
+                        
+            <tr id=RIC1051>
+                <!-- <td class='id'>RIC1051</td> -->
+                <td><input type="checkbox" class="solved"></td>
+                <td class='timestamp'>21:11:09 </td>
+                <td class='name'>Zuzana Havlíčková</td>
+                <td class='club'>RIC</td>
+                <td class='oldcard'>8016298</td>
+                <td class='card'>874522</td>
+            </tr>
+                        
+            <tr id=DKP0759>
+                <!-- <td class='id'>DKP0759</td> -->
+                <td><input type="checkbox" class="solved"></td>
+                <td class='timestamp'>21:09:29 </td>
+                <td class='name'>Amálie Anna Mušková</td>
+                <td class='club'>DKP</td>
+                <td class='oldcard'>8066788</td>
+                <td class='card'>869555</td>
+            </tr>
+                        
+            <tr id=DKP0759>
+                <!-- <td class='id'>DKP0759</td> -->
+                <td><input type="checkbox" class="solved"></td>
+                <td class='timestamp'>21:09:29 </td>
+                <td class='name'>Amálie Anna Mušková</td>
+                <td class='club'>DKP</td>
+                <td class='oldcard'>8066788</td>
+                <td class='card'>869555</td>
+            </tr>
+            
+                    </table>
+                </section>                
+
+                <!-- Pozdní starty -->
+                <section>
+                    <p class="cat-title">
+                        <span class="category">Přehled opožděných startů</span>
+                    </p>
+                    <table id='dataLateStart'>                        
+                        
+                <tr>
+                    <!-- <th class='id'>Id</th> -->
+                    <th onclick="sortTable(0, 'dataLateStart')" class='solved'>Vyřešeno</th>
+                    <th onclick="sortTable(1, 'dataLateStart')" class='timestamp'>Čas změny</th>
+                    <th onclick="sortTable(2, 'dataLateStart')" class='name'>Jméno</th>
+                    <th onclick="sortTable(3, 'dataLateStart')" class='club'>Klub</th>
+                    <th onclick="sortTable(4, 'dataLateStart')" class='card'>Čip</th>
+                </tr>
+                            
+            <tr id=TAP1401>
+                <!-- <td class='id'>TAP1401</td> -->
+                <td><input type="checkbox" class="solved"></td>
+                <td class='timestamp'>21:11:03</td>
+                <td class='name'>Šimon Hýbl</td>
+                <td class='club'>TAP</td>
+                <td class='card'>51628</td>
+            </tr>
+                                    
+                    </table>
+                </section>                
+
+                <!-- Komentáře -->
+                <section>
+                    <p class="cat-title">
+                        <span class="category">Přehled komentářů od startérů</span>
+                    </p>
+                    <table id='dataComments'>              
+                        
+                <tr>
+                    <!-- <th class='id'>Id</th> -->
+                    <th onclick="sortTable(0, 'dataComments')" class='solved'>Vyřešeno</th>
+                    <th onclick="sortTable(1, 'dataComments')" class='timestamp'>Čas změny</th>
+                    <th onclick="sortTable(2, 'dataComments')" class='name'>Jméno</th>
+                    <th onclick="sortTable(3, 'dataComments')" class='club'>Klub</th>
+                    <th onclick="sortTable(4, 'dataComments')" class='card'>Čip</th>
+                    <th onclick="sortTable(5, 'dataComments')" class='comment'>Komentář</th>
+                </tr> 
+                            
+            <tr id=EKP7002>
+                <!-- <td class='id'>EKP7002</td> -->
+                <td><input type="checkbox" class="solved"></td>
+                <td class='timestamp'>21:11:34</td>
+                <td class='name'>Ondřej Blaha</td>
+                <td class='club'>EKP</td>
+                <td class='card'>9700729</td>
+                <td class='comment'>Limp</td>
+            </tr>
+                        
+            <tr id=LCE8001>
+                <!-- <td class='id'>LCE8001</td> -->
+                <td><input type="checkbox" class="solved"></td>
+                <td class='timestamp'>21:09:39</td>
+                <td class='name'>Jan Červák</td>
+                <td class='club'>LCE</td>
+                <td class='card'>8016297</td>
+                <td class='comment'>Test poznámky</td>
+            </tr>
+                        
+            <tr id=LCE8001>
+                <!-- <td class='id'>LCE8001</td> -->
+                <td><input type="checkbox" class="solved"></td>
+                <td class='timestamp'>21:09:39</td>
+                <td class='name'>Jan Červák</td>
+                <td class='club'>LCE</td>
+                <td class='card'>8016297</td>
+                <td class='comment'>Test poznámky</td>
+            </tr>
+              
+                    </table>
+                </section>
+                
+                <!-- Statistiky -->
+                <section>
+                        <p class="cat-title">
+                            <span class="category">Statistiky reportů</span>
+                        </p>
+                        <table id='dataStatistics'>              
+                            
+                <tr>
+                    <th onclick="sortTable(0, 'dataStatistics')" class='filename'>Název souboru</th>
+                    <th onclick="sortTable(1, 'dataStatistics')" class='created'>Datum vytvoření</th>
+                    <th onclick="sortTable(2, 'dataStatistics')" class='creator'>Verze aplikace</th>
+                    <th onclick="sortTable(3, 'dataStatistics')" class='version'>Verze reportu</th>
+                    <th onclick="sortTable(4, 'dataStatistics')" class='ok'>OK</th>
+                    <th onclick="sortTable(5, 'dataStatistics')" class='dns'>DNS</th>
+                    <th onclick="sortTable(6, 'dataStatistics')" class='new-cards'>New cards</th>
+                    <th onclick="sortTable(7, 'dataStatistics')" class='late-starts'>Late starts</th>
+                    <th onclick="sortTable(8, 'dataStatistics')" class='new-comments'>New comments</th>
+                </tr> 
+                            
+                <tr>
+                    <td class='file'>kam-oblz_pohori.yaml</td>
+                    <td class='created'>22:59:05</td>
+                    <td class='creator'>O Checklist 3.3.2</td>
+                    <td class='version'>1.0</td>
+                    <td class='ok'>535</td>
+                    <td class='dns'>24</td>
+                    <td class='new-cards'>3</td>
+                    <td class='late-starts'>1</td>
+                    <td class='new-comments'>2</td>
+                </tr>
+                            
+                <tr>
+                    <td class='file'>report_demo.yaml</td>
+                    <td class='created'>21:10:07</td>
+                    <td class='creator'>O Checklist 3.3.2</td>
+                    <td class='version'>1.0</td>
+                    <td class='ok'>30</td>
+                    <td class='dns'>4</td>
+                    <td class='new-cards'>1</td>
+                    <td class='late-starts'>0</td>
+                    <td class='new-comments'>1</td>
+                </tr>
+                  
+                        </table>
+                    </section>
+
+                <footer>
+                    <p>Created with script by Cáš based on report from O Checklist mobile app.</p>
+                </footer>
+                
+    <script>
+        function sortTable(columnIndex, tableId) {
+            var table, rows, switching, i, x, y, shouldSwitch;
+            table = document.getElementById(tableId);
+            switching = true;
+            while (switching) {
+              switching = false;
+              rows = table.rows;
+              for (i = 1; i < rows.length - 1; i++) {
+                shouldSwitch = false;
+                x = rows[i].getElementsByTagName("TD")[columnIndex];
+                y = rows[i + 1].getElementsByTagName("TD")[columnIndex];
+                if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                  shouldSwitch = true;
+                  break;
+                }
+              }
+              if (shouldSwitch) {
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+              }
+            }
+        }
+        
+        // Function to store table row status in local storage
+        function saveTableRowStatus(tableId, rowId, checked) {
+            const key = `${tableId}-${rowId}`; // Create a unique key using tableId and rowId
+            if (checked) {
+              localStorage.setItem(key, true); // Store the status in local storage
+            } else {
+              localStorage.removeItem(key); // Remove the status from local storage
+            }
+        }
+          
+        // Function to load table row status from local storage
+        function loadTableRowStatus(tableId, rowId) {
+          const key = `${tableId}-${rowId}`; // Create the unique key
+          return localStorage.getItem(key) === 'true'; // Return the stored status as boolean
+        }
+        
+        // Get all the checkboxes
+        const checkboxes = document.querySelectorAll('.solved');
+        
+        // Add event listener to each checkbox
+        checkboxes.forEach((checkbox) => {
+          checkbox.addEventListener('change', (event) => {
+            const row = event.target.parentElement.parentElement; // Get the row element
+            const rowId = row.id; // Get the id of the row
+            const tableId = row.closest('table').id; // Get the id of the parent table
+            const checked = event.target.checked; // Get the checkbox checked status
+            saveTableRowStatus(tableId, rowId, checked); // Save the table row status to local storage
+          });
+        });
+        
+        // Load the table row status from local storage and tick the checkboxes
+        checkboxes.forEach((checkbox) => {
+          const row = checkbox.parentElement.parentElement; // Get the row element
+          const rowId = row.id; // Get the id of the row
+          const tableId = row.closest('table').id; // Get the id of the parent table
+          const storedStatus = loadTableRowStatus(tableId, rowId); // Load the stored status from local storage
+          checkbox.checked = storedStatus; // Set the checkbox checked status
+        });
+
+    </script>
+    
+            </body>
+        </html>
+    

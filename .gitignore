@@ -1,4 +1,4 @@
 /config.py
-*.html
+/*.html
 sample-data/kam-oblz_pohori.yaml
-/_pycache_
+__pycache__/*
