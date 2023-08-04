@@ -57,7 +57,7 @@ def download_file_from_ftp(server, login, password, subfolder='/'):
 def process_downloaded_yaml(downloaded_files):
     """
     Iterates over all downloaded file and separates changes - dns, late starts, changes cards and new comments
-    :param downloaded_files: list of lists iwth filename and contents of downloaded yaml files
+    :param downloaded_files: list of lists with filename and contents of downloaded yaml files
     :return: dictionary of lists with changes by type
     """
 
@@ -78,23 +78,65 @@ def process_downloaded_yaml(downloaded_files):
         # Access report data
         report_data = downloaded_data['Data']
         for runner in report_data:
+            # Values
+            runner_id = runner['Runner']['Id'] if runner['Runner']['Id'] is not None else ''
+            runner_start_time = runner['Runner']['StartTime']
+            runner_class_name = runner['Runner']['ClassName']
+            runner_name = runner['Runner']['Name'] if runner['Runner']['Name'] is not None else ''
+            runner_club = runner['Runner']['Org'] if runner['Runner']['Org'] is not None else ''
+            runner_card = runner['Runner']['Card'] if runner['Runner']['Card'] is not None else ''
+
             if runner['ChangeLog'] is not None:
                 # New card
                 if 'NewCard' in runner['Runner']:
-                    changes_cards.append([runner['Runner']['Id'], runner['ChangeLog']['NewCard'], runner['Runner']['Name'], runner['Runner']['Org'],runner['Runner']['Card'], runner['Runner']['NewCard']])
+                    changes_cards.append([
+                        runner_id,
+                        runner_start_time,
+                        runner['ChangeLog']['NewCard'],
+                        runner_name,
+                        runner_class_name,
+                        runner_club,
+                        runner_card,
+                        runner['Runner']['NewCard']
+                    ])
                 # # DNS
                 if 'DNS' in runner['Runner']['StartStatus']:
-                    changes_dns.append([runner['Runner']['Id'], runner['ChangeLog']['DNS'], runner['Runner']['Name'], runner['Runner']['Org'],runner['Runner']['Card']])
+                    changes_dns.append([
+                        runner_id,
+                        runner_start_time,
+                        runner['ChangeLog']['DNS'],
+                        runner_name,
+                        runner_class_name,
+                        runner_club,
+                        runner_card
+                    ])
                 # # Late start
                 if 'Late start' in runner['Runner']['StartStatus']:
-                    changes_late_start.append([runner['Runner']['Id'], runner['ChangeLog']['LateStart'], runner['Runner']['Name'], runner['Runner']['Org'],runner['Runner']['Card']])
+                    changes_late_start.append([
+                        runner_id,
+                        runner_start_time,
+                        runner['ChangeLog']['LateStart'],
+                        runner_name,
+                        runner_class_name,
+                        runner_club,
+                        runner_card
+                    ])
                 # # Comment
                 if 'Comment' in runner['Runner']:
-                    changes_comments.append([runner['Runner']['Id'], runner['ChangeLog']['Comment'], runner['Runner']['Name'], runner['Runner']['Org'], runner['Runner']['Card'], runner['Runner']['Comment']])
+                    changes_comments.append([
+                        runner_id,
+                        runner_start_time,
+                        runner['ChangeLog']['Comment'],
+                        runner_name,
+                        runner_class_name,
+                        runner_club,
+                        runner_card,
+                        runner['Runner']['Comment']
+                    ])
 
             # Store started runners
             else:
-                started_ok.append(runner['Runner']['Name'] + ', ' + runner['Runner']['Org'])
+                started_ok.append(runner_name + ', ' + runner_class_name + ', ' + runner_club)
         # Store statistics
         stats = {'ok': len(started_ok),
                  'dns': len(changes_dns),
@@ -389,22 +431,25 @@ def generate_html_report(changes, report_name = 'online-report'):
                 <tr>
                     <!-- <th class='id'>Id</th> -->
                     <th onclick="sortTable(0, 'dataDNS')" class='solved'>Vyřešeno</th>
-                    <th onclick="sortTable(1, 'dataDNS')" class='timestamp'>Čas změny</th>
-                    <th onclick="sortTable(2, 'dataDNS')" class='name'>Jméno</th>
-                    <th onclick="sortTable(3, 'dataDNS')" class='club'>Klub</th>
-                    <th onclick="sortTable(4, 'dataDNS')" class='card'>Čip</th>
+                    <th onclick="sortTable(1, 'dataDNS')" class='timestamp'>Star. čas</th>
+                    <th onclick="sortTable(2, 'dataDNS')" class='timestamp'>Čas změny</th>
+                    <th onclick="sortTable(3, 'dataDNS')" class='name'>Jméno</th>
+                    <th onclick="sortTable(4, 'dataDNS')" class='class'>Kategorie</th>
+                    <th onclick="sortTable(5, 'dataDNS')" class='club'>Klub</th>
+                    <th onclick="sortTable(6, 'dataDNS')" class='card'>Čip</th>
                 </tr>
                 '''
         for dns in changes['dns']:
             dns_changes_data += '''            
-            <tr id='''+dns[0]+'''>
+            <tr id='''+dns[1].strftime('%Y%m%d%H%M%S')+dns[4]+'''>
                 <!-- <td class='id'>'''+dns[0]+'''</td> -->
-                <!-- <td class='timestamp'>'''+dns[1].strftime('%d.%m.%Y %H:%M:%S')+'''</td> -->
                 <td><input type="checkbox" class="solved"></td>
-                <td class='timestamp'>'''+dns[1].strftime('%H:%M:%S')+'''</td>
-                <td class='name'>'''+dns[2]+'''</td>
-                <td class='club'>'''+dns[3]+'''</td>
-                <td class='card'>'''+str(dns[4])+'''</td>
+                <td class='starttime'>'''+dns[1].strftime('%H:%M:%S')+'''</td>
+                <td class='timestamp'>'''+dns[2].strftime('%H:%M:%S')+'''</td>
+                <td class='name'>'''+dns[3]+'''</td>
+                <td class='class'>'''+dns[4]+'''</td>
+                <td class='club'>'''+dns[5]+'''</td>
+                <td class='card'>'''+str(dns[6])+'''</td>
             </tr>
             '''
     dns_changes_html = dns_changes_template.format(table_data=dns_changes_data)
@@ -430,23 +475,27 @@ def generate_html_report(changes, report_name = 'online-report'):
                 <tr>
                     <!-- <th class='id'>Id</th> -->
                     <th onclick="sortTable(0, 'dataCards')" class='solved'>Vyřešeno</th>
-                    <th onclick="sortTable(1, 'dataCards')" class='timestamp'>Čas změny</th>
-                    <th onclick="sortTable(2, 'dataCards')" class='name'>Jméno</th>
-                    <th onclick="sortTable(3, 'dataCards')" class='club'>Klub</th>
-                    <th onclick="sortTable(4, 'dataCards')" class='oldcard'>Starý čip</th>
-                    <th onclick="sortTable(5, 'dataCards')" class='card'>Nový čip</th>
+                    <th onclick="sortTable(1, 'dataCards')" class='starttime'>Star. čas</th>
+                    <th onclick="sortTable(2, 'dataCards')" class='timestamp'>Čas změny</th>
+                    <th onclick="sortTable(3, 'dataCards')" class='name'>Jméno</th>
+                    <th onclick="sortTable(4, 'dataCards')" class='class'>Kategorie</th>
+                    <th onclick="sortTable(5, 'dataCards')" class='club'>Klub</th>
+                    <th onclick="sortTable(6, 'dataCards')" class='oldcard'>Starý čip</th>
+                    <th onclick="sortTable(7, 'dataCards')" class='card'>Nový čip</th>
                 </tr>
                 '''
         for card in changes['changed_cards']:
             cards_changes_data += '''            
-            <tr id='''+card[0]+'''>
+            <tr id='''+card[1].strftime('%Y%m%d%H%M%S')+card[4]+'''>
                 <!-- <td class='id'>'''+card[0]+'''</td> -->
                 <td><input type="checkbox" class="solved"></td>
-                <td class='timestamp'>'''+card[1].strftime('%H:%M:%S')+''' </td>
-                <td class='name'>'''+card[2]+'''</td>
-                <td class='club'>'''+card[3]+'''</td>
-                <td class='oldcard'>'''+str(card[4])+'''</td>
-                <td class='card'>'''+str(card[5])+'''</td>
+                <td class='starttime'>'''+card[1].strftime('%H:%M:%S')+''' </td>
+                <td class='timestamp'>'''+card[2].strftime('%H:%M:%S')+''' </td>
+                <td class='name'>'''+card[3]+'''</td>
+                <td class='class'>'''+card[4]+'''</td>
+                <td class='club'>'''+card[5]+'''</td>
+                <td class='oldcard'>'''+str(card[6])+'''</td>
+                <td class='card'>'''+str(card[7])+'''</td>
             </tr>
             '''
     cards_changes_html = cards_changes_template.format(table_data=cards_changes_data)
@@ -472,21 +521,25 @@ def generate_html_report(changes, report_name = 'online-report'):
                 <tr>
                     <!-- <th class='id'>Id</th> -->
                     <th onclick="sortTable(0, 'dataLateStart')" class='solved'>Vyřešeno</th>
-                    <th onclick="sortTable(1, 'dataLateStart')" class='timestamp'>Čas změny</th>
-                    <th onclick="sortTable(2, 'dataLateStart')" class='name'>Jméno</th>
-                    <th onclick="sortTable(3, 'dataLateStart')" class='club'>Klub</th>
-                    <th onclick="sortTable(4, 'dataLateStart')" class='card'>Čip</th>
+                    <th onclick="sortTable(1, 'dataLateStart')" class='starttime'>Star. čas</th>
+                    <th onclick="sortTable(2, 'dataLateStart')" class='timestamp'>Čas změny</th>
+                    <th onclick="sortTable(3, 'dataLateStart')" class='name'>Jméno</th>
+                    <th onclick="sortTable(4, 'dataLateStart')" class='class'>Kategorie</th>
+                    <th onclick="sortTable(5, 'dataLateStart')" class='club'>Klub</th>
+                    <th onclick="sortTable(6, 'dataLateStart')" class='card'>Čip</th>
                 </tr>
                 '''
         for late_start in changes['late_starts']:
             late_starts_changes_data += '''            
-            <tr id='''+late_start[0]+'''>
+            <tr id='''+late_start[1].strftime('%Y%m%d%H%M%S')+late_start[4]+'''>
                 <!-- <td class='id'>'''+late_start[0]+'''</td> -->
                 <td><input type="checkbox" class="solved"></td>
-                <td class='timestamp'>'''+late_start[1].strftime('%H:%M:%S')+'''</td>
-                <td class='name'>'''+late_start[2]+'''</td>
-                <td class='club'>'''+late_start[3]+'''</td>
-                <td class='card'>'''+str(late_start[4])+'''</td>
+                <td class='starttime'>'''+late_start[1].strftime('%H:%M:%S')+'''</td>
+                <td class='timestamp'>'''+late_start[2].strftime('%H:%M:%S')+'''</td>
+                <td class='name'>'''+late_start[3]+'''</td>
+                <td class='class'>'''+late_start[4]+'''</td>
+                <td class='club'>'''+late_start[5]+'''</td>
+                <td class='card'>'''+str(late_start[6])+'''</td>
             </tr>
             '''
     late_starts_changes_html = late_starts_changes_template.format(table_data=late_starts_changes_data)
@@ -512,23 +565,27 @@ def generate_html_report(changes, report_name = 'online-report'):
                 <tr>
                     <!-- <th class='id'>Id</th> -->
                     <th onclick="sortTable(0, 'dataComments')" class='solved'>Vyřešeno</th>
-                    <th onclick="sortTable(1, 'dataComments')" class='timestamp'>Čas změny</th>
-                    <th onclick="sortTable(2, 'dataComments')" class='name'>Jméno</th>
-                    <th onclick="sortTable(3, 'dataComments')" class='club'>Klub</th>
-                    <th onclick="sortTable(4, 'dataComments')" class='card'>Čip</th>
-                    <th onclick="sortTable(5, 'dataComments')" class='comment'>Komentář</th>
+                    <th onclick="sortTable(1, 'dataComments')" class='starttime'>Star. čas</th>
+                    <th onclick="sortTable(2, 'dataComments')" class='timestamp'>Čas změny</th>
+                    <th onclick="sortTable(3, 'dataComments')" class='name'>Jméno</th>
+                    <th onclick="sortTable(4, 'dataComments')" class='class'>Kategorie</th>
+                    <th onclick="sortTable(5, 'dataComments')" class='club'>Klub</th>
+                    <th onclick="sortTable(6, 'dataComments')" class='card'>Čip</th>
+                    <th onclick="sortTable(7, 'dataComments')" class='comment'>Komentář</th>
                 </tr> 
                 '''
         for comment in changes['comments']:
             comments_changes_data += '''            
-            <tr id='''+comment[0]+'''>
+            <tr id='''+comment[1].strftime('%Y%m%d%H%M%S')+comment[4]+'''>
                 <!-- <td class='id'>''' + comment[0] + '''</td> -->
                 <td><input type="checkbox" class="solved"></td>
-                <td class='timestamp'>''' + comment[1].strftime('%H:%M:%S') + '''</td>
-                <td class='name'>'''+comment[2]+'''</td>
-                <td class='club'>'''+comment[3]+'''</td>
-                <td class='card'>'''+str(comment[4])+'''</td>
-                <td class='comment'>'''+comment[5]+'''</td>
+                <td class='starttime'>''' + comment[1].strftime('%H:%M:%S') + '''</td>
+                <td class='timestamp'>''' + comment[2].strftime('%H:%M:%S') + '''</td>
+                <td class='name'>'''+comment[3]+'''</td>
+                <td class='class'>'''+comment[4]+'''</td>
+                <td class='club'>'''+comment[5]+'''</td>
+                <td class='card'>'''+str(comment[6])+'''</td>
+                <td class='comment'>'''+comment[7]+'''</td>
             </tr>
             '''
     comments_changes_html = comments_changes_template.format(table_data=comments_changes_data)
@@ -610,6 +667,7 @@ def generate_html_report(changes, report_name = 'online-report'):
 
     return html_file
 
+# Not used yet, under development
 def parse_args() -> Tuple[int, str]:
     """
     Parse input arguments
