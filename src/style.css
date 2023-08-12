@@ -1,0 +1,131 @@
+* {
+    box-sizing: border-box;
+}
+
+html {
+    font-family: "Roboto", sans-serif;
+}
+
+body {
+    margin: 0px;
+    max-width: 1000px;
+}
+
+@media screen and (min-width: 801px) {
+    h1 {
+        font-size: 30px;
+    }
+
+    h2 {
+        font-size: 20px;
+    }
+}
+
+@media screen and (max-width: 800px) {
+    h1 {
+        font-size: 4vw;
+    }
+
+    h2 {
+        font-size: 3vw;
+    }
+}
+
+@media only screen and (max-width: 600px) {
+
+    th.card,
+    th.club,
+    td.card,
+    td.club {
+        display: none;
+    }
+}
+
+h1 {
+    margin: 5px 0px;
+}
+
+h2 {
+    margin: 5px 0px;
+}
+
+header {
+    padding: 1px 15px;
+    margin-top: 5px;
+}
+
+footer {
+    padding: 1px 15px;
+    margin: 5px 15px;
+    border-radius: 5px;
+    background-color: #d3d3d3;
+    font-size: 12px;
+}
+
+section {
+    padding: 10px 15px;
+    margin: 0px 0px;
+    page-break-inside: avoid;
+}
+
+table,
+tr,
+td {
+    border-collapse: collapse;
+    padding: 2px;
+}
+
+table {
+    width: 100%;
+}
+
+td.name,
+td.club {
+    width: 30%;
+}
+
+td.card {
+    width: 15%;
+}
+
+th,
+td {
+    text-align: left;
+}
+
+td.nodata {
+    background-color: #d3d3d3;
+    border-radius: 5px;
+}
+
+td.oldcard {
+    text-decoration: line-through;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+p.cat-title {
+    background-color: #139c17;
+    margin: 10px 0px 5px 0px;
+    padding: 5px;
+    border-radius: 5px;
+    position: relative;
+}
+
+p.cat-title span.category {
+    font-weight: bold;
+    font-size: 1.5em;
+}
+
+p.cat-title span.controls {
+    font-size: 1.0em;
+    position: absolute;
+    right: 5px;
+    bottom: 5px;
+}
+
+.row-solved {
+    background-color: #99df99 !important;
+  }

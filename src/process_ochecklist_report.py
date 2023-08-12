@@ -175,12 +175,12 @@ def generate_html_report(changes, report_name = 'online-report'):
             <head>
                 <meta name="description" content="Report with changes from the start of orienteering event">
                 <meta name="keywords" content="ochecklist, orienteering, start, report">
-                <meta name="author" content="Lukas Kettner">
+                <meta name="author" content="Lukas Kettner, OK Kamenice">
                 <meta http-equiv='Content-Type' content='text/html; charset=utf-8' />
                 <meta name="viewport" content="width=device-width, initial-scale=1.0" /> 
                 <!-- TODO: Can be used instead of live-server -->
                 <!--<meta http-equiv="refresh" content="30"> -->           
-                {style}                
+                <link rel="stylesheet" href="src/style.css">                
                 <title>{heading}</title>
             </head>
             <body onload="sortTable(0, 'dataDNS'),sortTable(0, 'dataCards'),sortTable(0, 'dataLateStart'),sortTable(0, 'dataComments'),sortTable(0, 'dataStatistics')">
@@ -188,226 +188,27 @@ def generate_html_report(changes, report_name = 'online-report'):
                     <h1>{heading}</h1>
                     <h2>{time_stamp}</h2>
                 </header>                
-                <!-- Nestartující -->
+                <!-- Did not start (DNS) -->
                 <section>{content_dns}</section>                
 
-                <!-- Změny čipů -->
+                <!-- Card canges -->
                 <section>{content_cards}</section>                
 
-                <!-- Pozdní starty -->
+                <!-- Late starts -->
                 <section>{content_late_start}</section>                
 
-                <!-- Komentáře -->
+                <!-- Comments -->
                 <section>{content_comments}</section>
                 
-                <!-- Statistiky -->
+                <!-- Stats -->
                 <section>{content_statistics}</section>
 
                 <footer>
                     <p>Created with script by Cáš based on report from O Checklist mobile app.</p>
                 </footer>
-                {javascript}
+                <script type="text/javascript" src="src/main.js"></script>
             </body>
         </html>
-    '''
-
-    html_style = '''
-    <style type='text/css'>
-    * {
-                        box-sizing: border-box;
-                    }
-            
-                    html {
-                        font-family: "Roboto", sans-serif;
-                    }
-            
-                    body {
-                        margin: 0px;
-                        max-width: 1000px;
-                    }
-            
-                    @media screen and (min-width: 801px) {
-                        h1 {
-                            font-size: 30px;
-                        }
-            
-                        h2 {
-                            font-size: 20px;
-                        }
-                    }
-            
-                    @media screen and (max-width: 800px) {
-                        h1 {
-                            font-size: 4vw;
-                        }
-            
-                        h2 {
-                            font-size: 3vw;
-                        }
-                    }
-            
-                    @media only screen and (max-width: 600px) {
-                        th.card,
-                        th.club,            
-                        td.card,
-                        td.club {
-                            display: none;
-                        }
-                    }
-            
-                    h1 {
-                        margin: 5px 0px;
-                    }
-            
-                    h2 {
-                        margin: 5px 0px;
-                    }
-            
-                    header {
-                        padding: 1px 15px;
-                        margin-top: 5px;
-                    }
-        
-                    footer {
-                        padding: 1px 15px;
-                        margin: 5px 15px;
-                        border-radius: 5px;
-                        background-color: #d3d3d3;
-                        font-size: 12px;
-                    }
-            
-                    section {
-                        padding: 10px 15px;
-                        margin: 0px 0px;
-                        page-break-inside: avoid;
-                    }
-            
-                    table,
-                    tr,
-                    td {
-                        border-collapse: collapse;
-                        padding: 2px;
-                    }
-            
-                    table {
-                        width: 100%;
-                    }
-            
-                    td.name,
-                    td.club {
-                        width: 30%;
-                    }
-            
-                    td.card {
-                        width: 15%;
-                    }
-                    
-                    th,
-                    td {
-                        text-align: left;
-                    }
-                    
-                    td.nodata {
-                        background-color: #d3d3d3;
-                        border-radius: 5px;
-                    }
-                    
-                    td.oldcard {
-                        text-decoration: line-through;
-                    }
-            
-                    tr:nth-child(even) {
-                        background-color: #f2f2f2;
-                    }
-            
-                    p.cat-title {
-                        background-color: #139c17;
-                        ;
-                        margin: 10px 0px 5px 0px;
-                        padding: 5px;
-                        border-radius: 5px;
-                        position: relative;
-                    }
-            
-                    p.cat-title span.category {
-                        font-weight: bold;
-                        font-size: 1.5em;
-                    }
-            
-                    p.cat-title span.controls {
-                        font-size: 1.0em;
-                        position: absolute;
-                        right: 5px;
-                        bottom: 5px;
-                    }
-            </style>
-    '''
-
-    html_javascript = '''
-    <script>
-        function sortTable(columnIndex, tableId) {
-            var table, rows, switching, i, x, y, shouldSwitch;
-            table = document.getElementById(tableId);
-            switching = true;
-            while (switching) {
-              switching = false;
-              rows = table.rows;
-              for (i = 1; i < rows.length - 1; i++) {
-                shouldSwitch = false;
-                x = rows[i].getElementsByTagName("TD")[columnIndex];
-                y = rows[i + 1].getElementsByTagName("TD")[columnIndex];
-                if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-                  shouldSwitch = true;
-                  break;
-                }
-              }
-              if (shouldSwitch) {
-                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-                switching = true;
-              }
-            }
-        }
-        
-        // Function to store table row status in local storage
-        function saveTableRowStatus(tableId, rowId, checked) {
-            const key = `${tableId}-${rowId}`; // Create a unique key using tableId and rowId
-            if (checked) {
-              localStorage.setItem(key, true); // Store the status in local storage
-            } else {
-              localStorage.removeItem(key); // Remove the status from local storage
-            }
-        }
-          
-        // Function to load table row status from local storage
-        function loadTableRowStatus(tableId, rowId) {
-          const key = `${tableId}-${rowId}`; // Create the unique key
-          return localStorage.getItem(key) === 'true'; // Return the stored status as boolean
-        }
-        
-        // Get all the checkboxes
-        const checkboxes = document.querySelectorAll('.solved');
-        
-        // Add event listener to each checkbox
-        checkboxes.forEach((checkbox) => {
-          checkbox.addEventListener('change', (event) => {
-            const row = event.target.parentElement.parentElement; // Get the row element
-            const rowId = row.id; // Get the id of the row
-            const tableId = row.closest('table').id; // Get the id of the parent table
-            const checked = event.target.checked; // Get the checkbox checked status
-            saveTableRowStatus(tableId, rowId, checked); // Save the table row status to local storage
-          });
-        });
-        
-        // Load the table row status from local storage and tick the checkboxes
-        checkboxes.forEach((checkbox) => {
-          const row = checkbox.parentElement.parentElement; // Get the row element
-          const rowId = row.id; // Get the id of the row
-          const tableId = row.closest('table').id; // Get the id of the parent table
-          const storedStatus = loadTableRowStatus(tableId, rowId); // Load the stored status from local storage
-          checkbox.checked = storedStatus; // Set the checkbox checked status
-        });
-
-    </script>
     '''
 
     # DNS
@@ -431,8 +232,8 @@ def generate_html_report(changes, report_name = 'online-report'):
                 <tr>
                     <!-- <th class='id'>Id</th> -->
                     <th onclick="sortTable(0, 'dataDNS')" class='solved'>Vyřešeno</th>
-                    <th onclick="sortTable(1, 'dataDNS')" class='timestamp'>Star. čas</th>
-                    <th onclick="sortTable(2, 'dataDNS')" class='timestamp'>Čas změny</th>
+                    <th onclick="sortTable(1, 'dataDNS')" class='timestamp'>Čas změny</th>
+                    <th onclick="sortTable(2, 'dataDNS')" class='timestamp'>Star. čas</th>
                     <th onclick="sortTable(3, 'dataDNS')" class='name'>Jméno</th>
                     <th onclick="sortTable(4, 'dataDNS')" class='class'>Kategorie</th>
                     <th onclick="sortTable(5, 'dataDNS')" class='club'>Klub</th>
@@ -444,8 +245,8 @@ def generate_html_report(changes, report_name = 'online-report'):
             <tr id='''+dns[1].strftime('%Y%m%d%H%M%S')+dns[4]+'''>
                 <!-- <td class='id'>'''+dns[0]+'''</td> -->
                 <td><input type="checkbox" class="solved"></td>
-                <td class='starttime'>'''+dns[1].strftime('%H:%M:%S')+'''</td>
                 <td class='timestamp'>'''+dns[2].strftime('%H:%M:%S')+'''</td>
+                <td class='starttime'>'''+dns[1].strftime('%H:%M:%S')+'''</td>
                 <td class='name'>'''+dns[3]+'''</td>
                 <td class='class'>'''+dns[4]+'''</td>
                 <td class='club'>'''+dns[5]+'''</td>
@@ -475,8 +276,8 @@ def generate_html_report(changes, report_name = 'online-report'):
                 <tr>
                     <!-- <th class='id'>Id</th> -->
                     <th onclick="sortTable(0, 'dataCards')" class='solved'>Vyřešeno</th>
-                    <th onclick="sortTable(1, 'dataCards')" class='starttime'>Star. čas</th>
-                    <th onclick="sortTable(2, 'dataCards')" class='timestamp'>Čas změny</th>
+                    <th onclick="sortTable(1, 'dataCards')" class='timestamp'>Čas změny</th>
+                    <th onclick="sortTable(2, 'dataCards')" class='starttime'>Star. čas</th>
                     <th onclick="sortTable(3, 'dataCards')" class='name'>Jméno</th>
                     <th onclick="sortTable(4, 'dataCards')" class='class'>Kategorie</th>
                     <th onclick="sortTable(5, 'dataCards')" class='club'>Klub</th>
@@ -489,8 +290,8 @@ def generate_html_report(changes, report_name = 'online-report'):
             <tr id='''+card[1].strftime('%Y%m%d%H%M%S')+card[4]+'''>
                 <!-- <td class='id'>'''+card[0]+'''</td> -->
                 <td><input type="checkbox" class="solved"></td>
-                <td class='starttime'>'''+card[1].strftime('%H:%M:%S')+''' </td>
-                <td class='timestamp'>'''+card[2].strftime('%H:%M:%S')+''' </td>
+                <td class='timestamp'>'''+card[2].strftime('%H:%M:%S')+'''</td>
+                <td class='starttime'>'''+card[1].strftime('%H:%M:%S')+'''</td>
                 <td class='name'>'''+card[3]+'''</td>
                 <td class='class'>'''+card[4]+'''</td>
                 <td class='club'>'''+card[5]+'''</td>
@@ -521,8 +322,8 @@ def generate_html_report(changes, report_name = 'online-report'):
                 <tr>
                     <!-- <th class='id'>Id</th> -->
                     <th onclick="sortTable(0, 'dataLateStart')" class='solved'>Vyřešeno</th>
-                    <th onclick="sortTable(1, 'dataLateStart')" class='starttime'>Star. čas</th>
-                    <th onclick="sortTable(2, 'dataLateStart')" class='timestamp'>Čas změny</th>
+                    <th onclick="sortTable(1, 'dataLateStart')" class='timestamp'>Čas změny</th>
+                    <th onclick="sortTable(2, 'dataLateStart')" class='starttime'>Star. čas</th>
                     <th onclick="sortTable(3, 'dataLateStart')" class='name'>Jméno</th>
                     <th onclick="sortTable(4, 'dataLateStart')" class='class'>Kategorie</th>
                     <th onclick="sortTable(5, 'dataLateStart')" class='club'>Klub</th>
@@ -534,8 +335,8 @@ def generate_html_report(changes, report_name = 'online-report'):
             <tr id='''+late_start[1].strftime('%Y%m%d%H%M%S')+late_start[4]+'''>
                 <!-- <td class='id'>'''+late_start[0]+'''</td> -->
                 <td><input type="checkbox" class="solved"></td>
-                <td class='starttime'>'''+late_start[1].strftime('%H:%M:%S')+'''</td>
                 <td class='timestamp'>'''+late_start[2].strftime('%H:%M:%S')+'''</td>
+                <td class='starttime'>'''+late_start[1].strftime('%H:%M:%S')+'''</td>
                 <td class='name'>'''+late_start[3]+'''</td>
                 <td class='class'>'''+late_start[4]+'''</td>
                 <td class='club'>'''+late_start[5]+'''</td>
@@ -565,8 +366,8 @@ def generate_html_report(changes, report_name = 'online-report'):
                 <tr>
                     <!-- <th class='id'>Id</th> -->
                     <th onclick="sortTable(0, 'dataComments')" class='solved'>Vyřešeno</th>
-                    <th onclick="sortTable(1, 'dataComments')" class='starttime'>Star. čas</th>
-                    <th onclick="sortTable(2, 'dataComments')" class='timestamp'>Čas změny</th>
+                    <th onclick="sortTable(1, 'dataComments')" class='timestamp'>Čas změny</th>
+                    <th onclick="sortTable(2, 'dataComments')" class='starttime'>Star. čas</th>
                     <th onclick="sortTable(3, 'dataComments')" class='name'>Jméno</th>
                     <th onclick="sortTable(4, 'dataComments')" class='class'>Kategorie</th>
                     <th onclick="sortTable(5, 'dataComments')" class='club'>Klub</th>
@@ -593,7 +394,7 @@ def generate_html_report(changes, report_name = 'online-report'):
     # Statistics
     statistics_changes_template = '''
                         <p class="cat-title">
-                            <span class="category">Statistiky reportů</span>
+                            <span class="category">Statistiky</span>
                         </p>
                         <table id='dataStatistics'>              
                             {table_data}  
@@ -652,9 +453,7 @@ def generate_html_report(changes, report_name = 'online-report'):
     statistics_changes_html = statistics_changes_template.format(table_data=statistics_changes_data)
 
     # Generate html report
-    html_file = html_file_template.format(style=html_style,
-                                          javascript=html_javascript,
-                                          heading='O Checklist report',
+    html_file = html_file_template.format(heading='O Checklist report',
                                           time_stamp=datetime.now().strftime('%d.%m.%Y %H:%M:%S'),
                                           content_dns=dns_changes_html,
                                           content_cards=cards_changes_html,
